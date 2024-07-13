@@ -1,0 +1,30 @@
+.inputs-container-inventory{
+    & > :nth-child(1){
+        width: 325px;
+        margin-bottom: 1rem;
+    }
+    & > :nth-child(2){
+        width: 325px;
+        margin-bottom: 1rem;
+    }
+    & > :nth-child(3){
+        width: 325px;
+        display: flex;
+        justify-content: space-between;
+        & > div{
+            width: 44%;
+        }
+    }
+    & > :nth-child(4){
+        width: 325px;
+        margin-top: 1rem;
+    }
+}
+
+input{
+    background-color: white;
+}
+
+select{
+    background-color: white;
+}

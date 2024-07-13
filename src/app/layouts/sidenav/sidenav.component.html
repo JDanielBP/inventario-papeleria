@@ -1,0 +1,28 @@
+<div class="sidenav-container">
+    <div class="sidenav">
+        <div class="logo-container">
+            <img src="../../../assets/img/logo/ciita-logo-icon.png"
+                alt="Logo"
+                width="100%"
+            />
+        </div>
+        <div class="sidenav-buttons">
+            <div matRipple>
+                <a routerLink="./inventario">
+                    <i><img src="../../../assets/img/icons/inventory_2.svg"/></i>
+                    <span>Inventario</span>
+                </a>
+            </div>
+            <div matRipple>
+                <a routerLink="./categorias">
+                    <i><img src="../../../assets/img/icons/category.svg"/></i>
+                    <span>Categorías</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div style="padding: 2rem;">
+        <router-outlet></router-outlet>
+    </div>
+</div>

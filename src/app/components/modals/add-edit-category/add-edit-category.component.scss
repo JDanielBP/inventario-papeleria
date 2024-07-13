@@ -1,0 +1,9 @@
+.input-category-name{
+    & > :nth-child(1){
+        width: 325px;
+    }
+}
+
+input{
+    background-color: white;
+}
