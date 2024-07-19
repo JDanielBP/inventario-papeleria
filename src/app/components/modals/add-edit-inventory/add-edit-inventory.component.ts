@@ -1,14 +1,19 @@
 import { Component, Inject } from '@angular/core';
-
-import { Inventory } from '../../../interfaces/inventory.interface';
-
-import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { InventoryService } from '../../../services/inventory/inventory.service';
-import { IdGeneratorService } from '../../../services/id-generator/id-generator.service';
+import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+
 import { CategoriesService } from '../../../services/categories/categories.service';
+import { IdGeneratorService } from '../../../services/id-generator/id-generator.service';
+import { InventoryService } from '../../../services/inventory/inventory.service';
+import { UnitsService } from '../../../services/units/units.service';
+
 import { Category } from '../../../interfaces/category.interface';
+import { Inventory } from '../../../interfaces/inventory.interface';
+import { InventoryInfoDTO } from '../../../interfaces/inventoryInfoDTO.interface';
+import { Unit } from '../../../interfaces/unit.interface';
+
+import { forkJoin } from 'rxjs';
 
 
 @Component({
@@ -29,39 +34,85 @@ export class AddEditInventoryComponent {
   newInventory: boolean = true;
   myForm!: FormGroup;
   categories: Category[] = [];
+  units: Unit[] = [];
+  inventory: Inventory = {
+    id: '',
+    name: '',
+    categoryID: '',
+    price: 0,
+    stock: 0,
+    unitID: '',
+    date: null
+  }
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: {inventory: Inventory, updatedData: boolean},
+    @Inject(MAT_DIALOG_DATA) public data: {inventoryInfo: InventoryInfoDTO, updatedData: boolean},
     public dialogRef: MatDialogRef<AddEditInventoryComponent>,
     private fb: FormBuilder,
     private idGeneratorService: IdGeneratorService,
     private inventoryService: InventoryService,
-    public categoriesService: CategoriesService
-  ) {}
+    private categoriesService: CategoriesService,
+    private unitsService: UnitsService
+  ) {
+    this.myForm = this.fb.group({
+      name: ['', [Validators.required, Validators.maxLength(60)]],
+      categoryID: [''],
+      price: ['', [Validators.min(0)]],
+      stock: ['', [Validators.required, Validators.min(0)]],
+      unitID: ['', [Validators.required, Validators.maxLength(30)]],
+    });
+  }
 
   ngOnInit(): void {
-    this.categoriesService.getCategoriesSimpleWay().subscribe(categories => {
-      this.categories = categories;
+    forkJoin({
+      categories: this.categoriesService.getCategories('',''),
+      units: this.unitsService.getUnits()
+    }).subscribe({
+      next: results => {
+        this.categories = results.categories;
+        this.units = results.units;
+
+        this.inventoryInfoDTOToInventory(); // ConvertIR.InventoryInfoDTO to Inventory
+
+        if(this.inventory.id){ // En caso de haber un ID se actualiza el formulario, pues se trata de una edición
+          this.myForm.setValue({
+            name: this.inventory.name,
+            categoryID: this.inventory.categoryID,
+            price: this.inventory.price,
+            stock: this.inventory.stock,
+            unitID: this.inventory.unitID
+          })
+        }
+      },
+      error: error => {
+        console.error('Error fetching categories or units', error);
+      }
     });
-    
-    if(this.data.inventory.id){
-      this.myForm = this.fb.group({
-        name: [this.data.inventory.name, [Validators.required, Validators.maxLength(60)]],
-        category: [this.data.inventory.category],
-        price: [this.data.inventory.price, [Validators.min(0)]],
-        stock: [this.data.inventory.stock, [Validators.required, Validators.min(0)]],
-        unit: [this.data.inventory.unit, [Validators.required, Validators.maxLength(30)]],
-      })
+  }
+
+  inventoryInfoDTOToInventory(){
+    const FindCategory = this.categories.find(category => category.name === this.data.inventoryInfo?.category);
+    if(FindCategory){
+      this.inventory.categoryID = FindCategory.id;
     }
-    else{
-      this.myForm = this.fb.group({
-        name: ['', [Validators.required, Validators.maxLength(60)]],
-        category: [''],
-        price: ['', [Validators.min(0)]],
-        stock: ['', [Validators.required, Validators.min(0)]],
-        unit: ['', [Validators.required, Validators.maxLength(30)]],
-      })
-    }    
+
+    const FindUnit = this.units.find(units => units.name === this.data.inventoryInfo?.unit);
+    if(FindUnit){
+      this.inventory.unitID = FindUnit.id;
+    }
+
+    if(this.data.inventoryInfo){
+      const inventoryInfo = this.data.inventoryInfo;
+      this.inventory = {
+        id: inventoryInfo.id,
+        name: inventoryInfo.name,
+        categoryID: this.inventory.categoryID,
+        price: inventoryInfo.price,
+        stock: inventoryInfo.stock,
+        unitID: this.inventory.unitID,
+        date: inventoryInfo.date
+      }
+    }
   }
 
   errorsInTheField(field: string){
@@ -86,25 +137,26 @@ export class AddEditInventoryComponent {
   registerInventory(){
     if(this.myForm.valid){
       this.data.updatedData = true;
-      if(this.data.inventory.id){ //Actualización de inventario
-        const createdDate = this.data.inventory.date;
-        const id = this.data.inventory.id;
-        this.data.inventory = this.myForm.value;
-        this.data.inventory.id = id;
-        this.data.inventory.date = createdDate;
+      if(this.inventory.id){ //Actualización de inventario
 
-        this.inventoryService.updateInventory(this.data.inventory)
+        const createdDate = this.inventory.date;
+        const id = this.inventory.id;
+        this.inventory = this.myForm.value;
+        this.inventory.id = id;
+        this.inventory.date = createdDate;
+
+        this.inventoryService.updateInventory(this.inventory)
           .subscribe({
             error: err => console.error('Ocurrió un error al actualizar el dato:', err),
             complete:() => this.dialogRef.close(this.data)
           })
       }
       else{ //Creación de nuevo inventario
-        this.data.inventory = this.myForm.value;
-        this.data.inventory.id = this.idGeneratorService.elevenCharacterID();
-        this.data.inventory.date = new Date;
+        this.inventory = this.myForm.value;
+        this.inventory.id = this.idGeneratorService.elevenCharacterID();
+        this.inventory.date = new Date;
 
-        this.inventoryService.addInventory(this.data.inventory)
+        this.inventoryService.addInventory(this.inventory)
           .subscribe({
             error: err => console.error('Ocurrió un error al registrar el dato:', err),
             complete:() => this.dialogRef.close(this.data)

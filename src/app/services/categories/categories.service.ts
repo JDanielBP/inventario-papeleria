@@ -15,7 +15,7 @@ export class CategoriesService {
     private http: HttpClient
   ) { }
 
-  getCategories(sort: string, order: SortDirection, page: number):Observable<Category[]>{
+  getCategories(sort: string, order: SortDirection, page?: number):Observable<Category[]>{
     if(!order && !sort){ order = 'desc'; sort = 'date' } //Se aplican para la primera vez que se obtienen los datos
 
     const params = new HttpParams()
@@ -23,10 +23,6 @@ export class CategoriesService {
       .set('_order', order)
 
     return this.http.get<Category[]>(`${this.baseURL}/categories`, {params})
-  }
-
-  getCategoriesSimpleWay():Observable<Category[]>{
-    return this.http.get<Category[]>(`${this.baseURL}/categories`)
   }
 
   addCategory(category: Category){

@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>
-  @if (!data.inventory.id) { Nuevo inventario }
-  @else { Editar inventario: {{data.inventory.name}} }
+  @if (!inventory.id) { Nuevo inventario }
+  @else { Editar inventario: {{data.inventoryInfo.name}} }
 </h2>
 
 <form [formGroup]="myForm" (ngSubmit)="registerInventory()" autocomplete="off" >
@@ -18,7 +18,7 @@
       }
     </div>
     <div>
-      <select name="categories" formControlName="category" style="width: 108%">
+      <select name="categories" formControlName="categoryID" style="width: 108%">
         <option value="" selected>Selecciona una categoría</option>
         @for (category of categories; track $index) {
           @if(category.id !== 'Category'){
@@ -54,15 +54,12 @@
       </div>
     </div>
     <div>
-      <input
-        type="text"
-        placeholder="Unidad"
-        formControlName="unit"
-        style="width: 100%"
-      />
-      @if (errorsInTheField('unit')) {
-        <p class="invalid-status-msg">{{getErrorMessage('unit')}}</p>
-      }
+      <select name="units" formControlName="unitID" style="width: 108%">
+        <option value="" disabled selected hidden>Unidad</option>
+        @for (unit of units; track $index) {
+          <option [value]="unit.id">{{ unit.name }}</option>
+        }
+      </select>
     </div>
   </mat-dialog-content>
 

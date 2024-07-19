@@ -16,7 +16,7 @@
       @if (errorsInTheField('name')) {
         <p class="invalid-status-msg">{{getErrorMessage('name')}}</p>
       }
-      @if (categoryErrorMsgAsync) {
+      @if (categoryErrorMsgAsync && myForm.touched) {
         <p class="invalid-status-msg">{{categoryErrorMsgAsync}}</p>
     }
     </div>
