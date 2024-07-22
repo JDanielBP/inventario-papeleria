@@ -86,7 +86,7 @@
 </div>
 
 <div class="sale-payment">
-  <div style="display: flex; justify-content: center; width: calc(100vw - 27.5rem)">
+  <div style="width: calc(100vw - 27.5rem)">
     <input 
       type="text" 
       pInputText 
@@ -98,8 +98,13 @@
   <p-button 
     label="Realizar Venta"
     severity="success"
-    [disabled]="cart.products.length === 0"
+    [disabled]="cart.products.length === 0 || customerNameMaxLength === true"
     [loading]="generatingNewSale"
     (click)="payment()"
   />
 </div>
+@if (customerName.errors?.['maxlength']) {
+  <div class="invalid-status-msg" style="margin-top: 0.5rem;">
+    El nombre no puede exceder los 40 caracteres
+  </div>
+}

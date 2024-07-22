@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
+import autoTable from 'jspdf-autotable'
 import { AutoCompleteCompleteEvent, AutoCompleteModule, AutoCompleteSelectEvent } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
+import { jsPDF } from "jspdf";
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -13,12 +15,12 @@ import { MatTable, MatTableModule } from '@angular/material/table';
 import { CartService } from '../../services/cart/cart.service';
 import { InventoryService } from '../../services/inventory/inventory.service';
 import { SalesService } from '../../services/sales/sales.service';
+import { IdGeneratorService } from '../../services/id-generator/id-generator.service';
 
 import { Cart } from '../../interfaces/cart.interface';
 import { InventoryInfoDTO } from '../../interfaces/inventoryInfoDTO.interface';
 import { Sale } from '../../interfaces/sale.interface';
 import { SaleDetail } from '../../interfaces/saleDetail.interface';
-import { IdGeneratorService } from '../../services/id-generator/id-generator.service';
 
 
 @Component({
@@ -50,7 +52,7 @@ export class SaleComponent {
   @ViewChild(MatTable) table!: MatTable<InventoryInfoDTO>;
 
   txtInput = new FormControl();
-  customerName = new FormControl();
+  customerName = new FormControl('', [Validators.maxLength(40)]);
   inventory: InventoryInfoDTO[] = [];
   deleteItem: boolean = false;
   addItem: boolean = true;
@@ -67,6 +69,13 @@ export class SaleComponent {
     private idGeneratorService: IdGeneratorService
   ){}
 
+  get customerNameErrors() {
+    return this.customerName.errors;
+  }
+
+  get customerNameMaxLength(): boolean {
+    return this.customerName.invalid;
+  }
 
   ngOnInit(){
     this.getInventory();
@@ -76,6 +85,7 @@ export class SaleComponent {
 
   getInventory(){
     this.txtInput.setValue('');
+    this.customerName.setValue('');
     this.inventoryService.getInventoryInfo('','')
       .subscribe(inventory => {
         this.inventory = inventory;
@@ -141,10 +151,11 @@ export class SaleComponent {
 
   payment(){
     this.generatingNewSale = true;
-
+    if(this.customerName.value)
+      this.customerName.setValue(this.customerName.value.toUpperCase());
     let sale: Sale = {
       id: this.idGeneratorService.elevenCharacterID(),
-      customer: this.customerName.value,
+      customer: this.customerName.value === '' ? '' : this.customerName.value!,
       total: this.cart.total,
       date: new Date(),
       saleDetail: []
@@ -165,13 +176,54 @@ export class SaleComponent {
       .subscribe({
         error: err => console.error('Ocurrió un error al registrar la venta:', err),
         complete:() => {
+          this.generateReport(sale);
           this.generatingNewSale = false;
           this.cart.products = [];
           this.cart.total = 0;
           this.dataSource = [];
           this.getInventory();
+          this.updateCustomerNameState();
           this.table.renderRows();
         }
       })
+  }
+
+  generateReport(sale: Sale){ //Se genera el reporte
+    const date = `${sale.date.getFullYear()}-${(sale.date.getMonth() + 1).toString().padStart(2, '0')}-${(sale.date.getDate()).toString().padStart(2, '0')} ${sale.date.getHours().toString().padStart(2, '0')}:${sale.date.getMinutes().toString().padStart(2, '0')}:${sale.date.getSeconds().toString().padStart(2, '0')}`
+    const dateForPDF = `${sale.date.getFullYear()}${(sale.date.getMonth() + 1).toString().padStart(2, '0')}${(sale.date.getDate()).toString().padStart(2, '0')}_${sale.date.getHours().toString().padStart(2, '0')}${sale.date.getMinutes().toString().padStart(2, '0')}${sale.date.getSeconds().toString().padStart(2, '0')}`
+    const pdfName = `SALE_${dateForPDF}.pdf`;
+    const doc = new jsPDF();
+
+    doc.text(`Venta: ${sale.id}`, 15, 15);
+    doc.text(`Fecha: ${date}`, doc.internal.pageSize.width - 85, 15);
+    doc.text(`Cliente: ${this.customerName.value}`, 15, 25);
+
+    const head = ['NOMBRE', 'CANTIDAD', 'PRECIO', 'SUBTOTAL'];
+    const body = this.cart.products.map(product => [
+      product.inventory.name,
+      product.quantity,
+      `$${product.inventory.price.toFixed(2)}`,
+      `$${(product.inventory.price * product.quantity).toFixed(2)}`
+    ]);
+    const footer = ['', '','TOTAL:', `$${this.cart.total.toFixed(2)}`]
+
+    autoTable(doc, {
+      startY: 30,
+      head: [head],
+      body: body,
+      foot: [footer],
+      headStyles: {
+        halign: 'center'
+      },
+      columnStyles: {
+        1: { halign: 'right' },
+        2: { halign: 'right' },
+        3: { halign: 'right' }
+      },
+      footStyles: {
+        halign: 'right'
+      }
+    })
+    doc.save(pdfName);
   }
 }
