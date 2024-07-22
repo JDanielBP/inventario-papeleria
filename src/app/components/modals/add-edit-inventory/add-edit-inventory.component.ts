@@ -14,6 +14,7 @@ import { InventoryInfoDTO } from '../../../interfaces/inventoryInfoDTO.interface
 import { Unit } from '../../../interfaces/unit.interface';
 
 import { forkJoin } from 'rxjs';
+import { DataConversionService } from '../../../services/data-conversion/data-conversion.service';
 
 
 @Component({
@@ -52,7 +53,8 @@ export class AddEditInventoryComponent {
     private idGeneratorService: IdGeneratorService,
     private inventoryService: InventoryService,
     private categoriesService: CategoriesService,
-    private unitsService: UnitsService
+    private unitsService: UnitsService,
+    private dataConversionService: DataConversionService
   ) {
     this.myForm = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(60)]],
@@ -72,47 +74,27 @@ export class AddEditInventoryComponent {
         this.categories = results.categories;
         this.units = results.units;
 
-        this.inventoryInfoDTOToInventory(); // ConvertIR.InventoryInfoDTO to Inventory
+        if(this.data.inventoryInfo)
+          this.dataConversionService.inventoryInfoDTOToInventory(this.data.inventoryInfo)
+            .subscribe(inventory => {
+              this.inventory = inventory;
 
-        if(this.inventory.id){ // En caso de haber un ID se actualiza el formulario, pues se trata de una edición
-          this.myForm.setValue({
-            name: this.inventory.name,
-            categoryID: this.inventory.categoryID,
-            price: this.inventory.price,
-            stock: this.inventory.stock,
-            unitID: this.inventory.unitID
-          })
-        }
+              if(this.inventory.id){ // En caso de haber un ID se actualiza el formulario, pues se trata de una edición
+                this.myForm.setValue({
+                  name: this.inventory.name,
+                  categoryID: this.inventory.categoryID,
+                  price: this.inventory.price,
+                  stock: this.inventory.stock,
+                  unitID: this.inventory.unitID
+                })
+              }
+
+            });
       },
       error: error => {
         console.error('Error fetching categories or units', error);
       }
     });
-  }
-
-  inventoryInfoDTOToInventory(){
-    const FindCategory = this.categories.find(category => category.name === this.data.inventoryInfo?.category);
-    if(FindCategory){
-      this.inventory.categoryID = FindCategory.id;
-    }
-
-    const FindUnit = this.units.find(units => units.name === this.data.inventoryInfo?.unit);
-    if(FindUnit){
-      this.inventory.unitID = FindUnit.id;
-    }
-
-    if(this.data.inventoryInfo){
-      const inventoryInfo = this.data.inventoryInfo;
-      this.inventory = {
-        id: inventoryInfo.id,
-        name: inventoryInfo.name,
-        categoryID: this.inventory.categoryID,
-        price: inventoryInfo.price,
-        stock: inventoryInfo.stock,
-        unitID: this.inventory.unitID,
-        date: inventoryInfo.date
-      }
-    }
   }
 
   errorsInTheField(field: string){

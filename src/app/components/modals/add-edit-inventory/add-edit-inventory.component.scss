@@ -1,6 +1,6 @@
 .inputs-container-inventory{
     & > :nth-child(1){
-        width: 325px;
+        width: 100%;
         margin-bottom: 1rem;
     }
     & > :nth-child(2){
@@ -8,7 +8,7 @@
         margin-bottom: 1rem;
     }
     & > :nth-child(3){
-        width: 325px;
+        width: 100%;
         display: flex;
         justify-content: space-between;
         & > div{

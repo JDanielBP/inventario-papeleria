@@ -16,25 +16,35 @@ export class InventoryService {
     private http: HttpClient,
   ) {}
 
-  getInventory(sort: string, order: SortDirection, page: number):Observable<InventoryInfoDTO[]>{
+  getInventory(sort: string, order: SortDirection, page?: number):Observable<Inventory[]>{
     if(!order && !sort){ order = 'desc'; sort = 'date' } //Se aplican para la primera vez que se obtienen los datos
 
     const params = new HttpParams()
       .set('_sort', sort)
       .set('_order', order)
 
-    return this.http.get<InventoryInfoDTO[]>(`${this.baseURL}/inventory`, {params})
+    return this.http.get<Inventory[]>(`${this.baseURL}/inventory`, {params})
   }
 
-  addInventory(inventory: Inventory){
+  getInventoryInfo(sort: string, order: SortDirection, page?: number):Observable<InventoryInfoDTO[]>{
+    if(!order && !sort){ order = 'desc'; sort = 'date' } //Se aplican para la primera vez que se obtienen los datos
+
+    const params = new HttpParams()
+      .set('_sort', sort)
+      .set('_order', order)
+
+    return this.http.get<InventoryInfoDTO[]>(`${this.baseURL}/inventoryInfoDTO`, {params})
+  }
+
+  addInventory(inventory: Inventory): Observable<Inventory>{
     return this.http.post<Inventory>(`${this.baseURL}/inventory`, inventory);
   }
 
-  updateInventory(inventory: Inventory){
+  updateInventory(inventory: Inventory): Observable<Inventory>{
     return this.http.put<Inventory>(`${this.baseURL}/inventory/${inventory.id}`, inventory);
   }
 
-  deleteInventory(inventory: string):Observable<any>{
+  deleteInventory(inventory: string): Observable<any>{
     return this.http.delete<any>(`${this.baseURL}/inventory/${inventory}`);
   }
 }

@@ -127,7 +127,7 @@ export class InventoryComponent {
   getInventory(): Observable<InventoryInfoDTO[]>{
     this.dataSource.filter = '';
     this.txtInput.setValue('');
-    return this.inventoryService.getInventory(
+    return this.inventoryService.getInventoryInfo(
       this.sort.active,
       this.sort.direction,
       this.paginator.pageIndex,
@@ -190,7 +190,7 @@ export class InventoryComponent {
   loadingInventory(){
     this.isLoadingResults = true;
 
-    this.inventoryService.getInventory(
+    this.inventoryService.getInventoryInfo(
       this.sort.active,
       this.sort.direction,
       this.paginator.pageIndex,
