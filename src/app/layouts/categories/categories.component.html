@@ -3,8 +3,9 @@
 <div class="categories-input">
     <input
         type="text"
+        pInputText
         placeholder="Buscar por ID, nombre o categoría"
-        style="width: 100%;"
+        [style]="{'width':'100%'}"
         [formControl]="txtInput"
         (keyup)="applySearchByText($event)"
     />

@@ -1,10 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
 
 import { InventoryInfoDTO } from '../../interfaces/inventoryInfoDTO.interface';
-import { AddEditInventoryComponent } from '../../components/modals/add-edit-inventory/add-edit-inventory.component';
+import { ConfirmMsg } from '../../interfaces/confirm-msg.interface';
 
 import { InventoryService } from '../../services/inventory/inventory.service';
 
+import { InputTextModule } from 'primeng/inputtext';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -18,8 +19,10 @@ import { merge, Observable, startWith, Subject, switchMap, takeUntil} from 'rxjs
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+
+import { AddEditInventoryComponent } from '../../components/modals/add-edit-inventory/add-edit-inventory.component';
 import { ConfirmComponent } from '../../components/modals/confirm/confirm.component';
-import { ConfirmMsg } from '../../interfaces/confirm-msg.interface';
+
 
 @Component({
   selector: 'app-inventory',
@@ -27,6 +30,7 @@ import { ConfirmMsg } from '../../interfaces/confirm-msg.interface';
   imports: [
     CommonModule,
     HttpClientModule,
+    InputTextModule,
     MatButtonModule,
     MatDialogModule,
     MatIconModule,

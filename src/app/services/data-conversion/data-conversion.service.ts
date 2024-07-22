@@ -25,8 +25,6 @@ export class DataConversionService {
         const category = results.category;
         const unit = results.unit;
 
-        console.log(category);
-        
         const inventory: Inventory = {
           id: inventoryInfoDTO.id,
           name: inventoryInfoDTO.name,

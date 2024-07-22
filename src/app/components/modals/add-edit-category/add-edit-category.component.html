@@ -5,8 +5,9 @@
   
 <form [formGroup]="myForm" (ngSubmit)="registerCategory()" autocomplete="off" >
   <mat-dialog-content class="input-category-name">
-    <div>
+    <div style="width: 100%;">
       <input
+        class="simple-input"
         type="text"
         placeholder="Nombre"
         autofocus

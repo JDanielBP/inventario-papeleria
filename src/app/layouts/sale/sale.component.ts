@@ -161,9 +161,6 @@ export class SaleComponent {
       sale.saleDetail.push(saleDetailOut);
     });
 
-    console.log(sale);
-    
-
     this.salesService.addSale(sale)
       .subscribe({
         error: err => console.error('Ocurrió un error al registrar la venta:', err),

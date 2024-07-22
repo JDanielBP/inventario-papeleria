@@ -5,8 +5,9 @@
 
 <form [formGroup]="myForm" (ngSubmit)="registerInventory()" autocomplete="off" >
   <mat-dialog-content class="inputs-container-inventory">
-    <div>
+    <div style="width: 100%;">
       <input
+        class="simple-input"
         type="text"
         placeholder="Nombre"
         autofocus
@@ -32,6 +33,7 @@
     <div>
       <div>
         <input
+          class="simple-input"
           type="number"
           placeholder="Precio"
           formControlName="price"
@@ -43,6 +45,7 @@
       </div>
       <div>
         <input
+          class="simple-input"
           type="number"
           placeholder="Cantidad"
           formControlName="stock"

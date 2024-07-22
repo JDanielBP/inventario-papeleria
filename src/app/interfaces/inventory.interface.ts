@@ -3,7 +3,7 @@ export interface Inventory{
     categoryID?:    string;
     unitID:         string;
     name:           string;
-    price:          number;
+    price?:         number;
     stock:          number;
     date:           Date | null;
 }

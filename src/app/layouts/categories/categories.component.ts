@@ -4,7 +4,11 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
 import { Category } from '../../interfaces/category.interface';
+import { confirmMsg } from '../../../../../angular-pos-system/src/app/interfaces/confirm-msg.interface';
 
+import { CategoriesService } from '../../services/categories/categories.service';
+
+import { InputTextModule } from 'primeng/inputtext';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,10 +17,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { CategoriesService } from '../../services/categories/categories.service';
+
 import { Observable, Subject, merge, startWith, switchMap, takeUntil } from 'rxjs';
+
 import { AddEditCategoryComponent } from '../../components/modals/add-edit-category/add-edit-category.component';
-import { confirmMsg } from '../../../../../angular-pos-system/src/app/interfaces/confirm-msg.interface';
 import { ConfirmComponent } from '../../components/modals/confirm/confirm.component';
 
 
@@ -26,6 +30,7 @@ import { ConfirmComponent } from '../../components/modals/confirm/confirm.compon
   imports: [
     CommonModule,
     HttpClientModule,
+    InputTextModule,
     MatButtonModule,
     MatDialogModule,
     MatIconModule,
