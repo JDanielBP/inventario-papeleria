@@ -2,12 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import autoTable from 'jspdf-autotable'
+import autoTable from 'jspdf-autotable';
 import { AutoCompleteCompleteEvent, AutoCompleteModule, AutoCompleteSelectEvent } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { jsPDF } from "jspdf";
 import { MatButtonModule } from '@angular/material/button';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTable, MatTableModule } from '@angular/material/table';
@@ -18,9 +19,10 @@ import { SalesService } from '../../services/sales/sales.service';
 import { IdGeneratorService } from '../../services/id-generator/id-generator.service';
 
 import { Cart } from '../../interfaces/cart.interface';
-import { InventoryInfoDTO } from '../../interfaces/inventoryInfoDTO.interface';
+import { InventoryInfo } from '../../interfaces/inventoryInfo.interface';
 import { Sale } from '../../interfaces/sale.interface';
-import { SaleDetail } from '../../interfaces/saleDetail.interface';
+import { SaleDetails } from '../../interfaces/saleDetails.interface';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 @Component({
@@ -32,9 +34,11 @@ import { SaleDetail } from '../../interfaces/saleDetail.interface';
     CommonModule,
     InputTextModule ,
     MatButtonModule,
+    MatCheckboxModule,
     MatIconModule,
     MatSnackBarModule,
     MatTableModule,
+    MatTooltipModule,
     ReactiveFormsModule
   ],
   templateUrl: './sale.component.html',
@@ -49,16 +53,17 @@ export class SaleComponent {
   dataSource = this.cart.products;
   tableColor = '#F6F6F6';
 
-  @ViewChild(MatTable) table!: MatTable<InventoryInfoDTO>;
+  @ViewChild(MatTable) table!: MatTable<InventoryInfo>;
 
   txtInput = new FormControl();
   customerName = new FormControl('', [Validators.maxLength(40)]);
-  inventory: InventoryInfoDTO[] = [];
+  printReport = new FormControl(false);
+  inventory: InventoryInfo[] = [];
   deleteItem: boolean = false;
   addItem: boolean = true;
   generatingNewSale: boolean = false;
 
-  filteredInventory: InventoryInfoDTO[] = [];
+  filteredInventory: InventoryInfo[] = [];
   dataTextEmpty: boolean = false;
 
   constructor(
@@ -102,7 +107,7 @@ export class SaleComponent {
   }
 
   search(e: AutoCompleteCompleteEvent){
-    let filtered: InventoryInfoDTO[] = [];
+    let filtered: InventoryInfo[] = [];
     let query = e.query;
 
     for (let i = 0; i < this.inventory.length; i++) {
@@ -129,19 +134,19 @@ export class SaleComponent {
     }    
   }
 
-  addItemToCartButton(item: InventoryInfoDTO){
+  addItemToCartButton(item: InventoryInfo){
     if(item.stock > 0){
       this.cartService.addItem(item);
       this.table.renderRows();
     }
   }
 
-  deleteItemFromCart(item: InventoryInfoDTO){
+  deleteItemFromCart(item: InventoryInfo){
     this.cartService.deleteItem(item);
     this.table.renderRows();
   }
 
-  removeItemFromCart(item: InventoryInfoDTO){
+  removeItemFromCart(item: InventoryInfo){
     this.cartService.removeItem(item);
     let itemPosition = this.dataSource.findIndex(itemOnTable => itemOnTable.inventory.id === item.id);
     this.dataSource.splice(itemPosition, 1);
@@ -163,20 +168,22 @@ export class SaleComponent {
 
     let i = 0;
     this.cart.products.forEach(product => {
-      let saleDetailOut: SaleDetail = {
+      let saleDetailOut: SaleDetails = {
         id: String(i++),
         inventoryID: product.inventory.id,
         quantity: product.quantity,
         price: product.inventory.price
       }
-      sale.saleDetail.push(saleDetailOut);
+      sale.saleDetail!.push(saleDetailOut);
     });
 
     this.salesService.addSale(sale)
       .subscribe({
         error: err => console.error('Ocurrió un error al registrar la venta:', err),
         complete:() => {
-          this.generateReport(sale);
+          if(this.printReport.value){
+            this.generateReport(sale);
+          }
           this.generatingNewSale = false;
           this.cart.products = [];
           this.cart.total = 0;
@@ -189,8 +196,8 @@ export class SaleComponent {
   }
 
   generateReport(sale: Sale){ //Se genera el reporte
-    const date = `${sale.date.getFullYear()}-${(sale.date.getMonth() + 1).toString().padStart(2, '0')}-${(sale.date.getDate()).toString().padStart(2, '0')} ${sale.date.getHours().toString().padStart(2, '0')}:${sale.date.getMinutes().toString().padStart(2, '0')}:${sale.date.getSeconds().toString().padStart(2, '0')}`
-    const dateForPDF = `${sale.date.getFullYear()}${(sale.date.getMonth() + 1).toString().padStart(2, '0')}${(sale.date.getDate()).toString().padStart(2, '0')}_${sale.date.getHours().toString().padStart(2, '0')}${sale.date.getMinutes().toString().padStart(2, '0')}${sale.date.getSeconds().toString().padStart(2, '0')}`
+    const date = `${sale.date!.getFullYear()}-${(sale.date!.getMonth() + 1).toString().padStart(2, '0')}-${(sale.date!.getDate()).toString().padStart(2, '0')} ${sale.date!.getHours().toString().padStart(2, '0')}:${sale.date!.getMinutes().toString().padStart(2, '0')}:${sale.date!.getSeconds().toString().padStart(2, '0')}`;
+    const dateForPDF = `${sale.date!.getFullYear()}${(sale.date!.getMonth() + 1).toString().padStart(2, '0')}${(sale.date!.getDate()).toString().padStart(2, '0')}_${sale.date!.getHours().toString().padStart(2, '0')}${sale.date!.getMinutes().toString().padStart(2, '0')}${sale.date!.getSeconds().toString().padStart(2, '0')}`;
     const pdfName = `SALE_${dateForPDF}.pdf`;
     const doc = new jsPDF();
 
@@ -224,6 +231,13 @@ export class SaleComponent {
         halign: 'right'
       }
     })
-    doc.save(pdfName);
+
+    const pdfBlobUrl = doc.output('bloburl');
+    const newWindow = window.open(pdfBlobUrl);
+    if (newWindow) {
+      newWindow.onload = () => {
+        newWindow.print();
+      };
+    }
   }
 }

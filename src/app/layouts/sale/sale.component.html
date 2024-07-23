@@ -3,7 +3,7 @@
 <div class="card sale-autocomplete">
   <p-autoComplete
       class="p-autocomplete"
-      placeholder="Buscar producto por Nombre"
+      placeholder="Buscar producto por nombre"
       [formControl]="txtInput"
       [suggestions]="filteredInventory"
       [style]="{'width':'100%'}"
@@ -86,7 +86,7 @@
 </div>
 
 <div class="sale-payment">
-  <div style="width: calc(100vw - 27.5rem)">
+  <div style="width: calc(100vw - 30.5rem)">
     <input 
       type="text" 
       pInputText 
@@ -94,6 +94,9 @@
       [style]="{'width':'100%'}"
       placeholder="Nombre del cliente (Opcional)"
     />
+  </div>
+  <div>
+    <mat-checkbox [formControl]="printReport" color="primary" matTooltip="Imprimir al finalizar la venta"></mat-checkbox>
   </div>
   <p-button 
     label="Realizar Venta"

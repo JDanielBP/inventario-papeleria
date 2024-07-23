@@ -1,6 +1,6 @@
-import { InventoryInfoDTO } from "./inventoryInfoDTO.interface";
+import { InventoryInfo } from "./inventoryInfo.interface";
 
 export interface ItemInCart{
-    inventory:      InventoryInfoDTO;
+    inventory:      InventoryInfo;
     quantity:       number;
 }

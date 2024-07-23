@@ -1,0 +1,59 @@
+<div class="view-sale">
+  <div>
+    <div>
+      <section>Venta {{data.id}}</section>
+      <section>Fecha: {{data.date | date:"dd'/'MMM'/'yyyy hh:mm:ss a"}}</section>
+      <section>Cliente: {{data.customer}}</section>
+    </div>
+    <div>
+      <button mat-icon-button matTooltip="Guardar como PDF" (click)="generateReport(false)">
+        <mat-icon>picture_as_pdf</mat-icon>
+      </button>
+      <button mat-icon-button matTooltip="Imprimir" (click)="generateReport(true)">
+        <mat-icon>print</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="mat-elevation-z8" style="width: 100%;">
+    <div class="table-data-container">
+      <table mat-table [dataSource]="dataSource" class="data-table" [style.background-color]="tableColor">
+  
+        <ng-container [matColumnDef]="displayedColumns[0]">
+          <th mat-header-cell *matHeaderCellDef style="text-align: center;">Nombre</th>
+          <td mat-cell *matCellDef="let saleDetais"> {{saleDetais.inventoryName}} </td>
+          <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>
+    
+        <ng-container [matColumnDef]="displayedColumns[1]">
+          <th mat-header-cell *matHeaderCellDef style="text-align: center;">Cantidad</th>
+          <td mat-cell *matCellDef="let saleDetais" class="quantity-in-table"> {{saleDetais.quantity}}</td>
+          <td mat-footer-cell *matFooterCellDef> </td>
+        </ng-container>
+  
+        <ng-container [matColumnDef]="displayedColumns[2]">
+          <th mat-header-cell *matHeaderCellDef style="text-align: center;">Precio</th>
+          <td mat-cell *matCellDef="let saleDetais"> {{saleDetais.price | currency : 'MXN'}} </td>
+          <td mat-footer-cell *matFooterCellDef><b>Total</b></td>
+        </ng-container>
+  
+        <ng-container [matColumnDef]="displayedColumns[3]">
+          <th mat-header-cell *matHeaderCellDef style="text-align: center;">&nbsp;SubTotal</th>
+          <td mat-cell *matCellDef="let saleDetais">
+            <b>{{saleDetais.price * saleDetais.quantity | currency : 'MXN'}}</b>
+          </td>
+          <td mat-footer-cell *matFooterCellDef> {{data.total | currency : 'MXN'}} </td>
+        </ng-container>
+  
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
+    
+      </table>
+    </div>
+  </div>
+
+  <div style="text-align: center; margin-top: 2rem;">
+    <button mat-button color="primary" (click)="this.dialogRef.close();">Aceptar</button>
+  </div>
+</div>

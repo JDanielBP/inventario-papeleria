@@ -1,4 +1,4 @@
-export interface InventoryInfoDTO{
+export interface InventoryInfo{
     id:         string;
     category?:  string;
     unit:       string;

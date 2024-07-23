@@ -10,7 +10,7 @@ import { UnitsService } from '../../../services/units/units.service';
 
 import { Category } from '../../../interfaces/category.interface';
 import { Inventory } from '../../../interfaces/inventory.interface';
-import { InventoryInfoDTO } from '../../../interfaces/inventoryInfoDTO.interface';
+import { InventoryInfo } from '../../../interfaces/inventoryInfo.interface';
 import { Unit } from '../../../interfaces/unit.interface';
 
 import { forkJoin } from 'rxjs';
@@ -47,7 +47,7 @@ export class AddEditInventoryComponent {
   }
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: {inventoryInfo: InventoryInfoDTO, updatedData: boolean},
+    @Inject(MAT_DIALOG_DATA) public data: {inventoryInfo: InventoryInfo, updatedData: boolean},
     public dialogRef: MatDialogRef<AddEditInventoryComponent>,
     private fb: FormBuilder,
     private idGeneratorService: IdGeneratorService,
@@ -75,7 +75,7 @@ export class AddEditInventoryComponent {
         this.units = results.units;
 
         if(this.data.inventoryInfo)
-          this.dataConversionService.inventoryInfoDTOToInventory(this.data.inventoryInfo)
+          this.dataConversionService.inventoryInfoToInventory(this.data.inventoryInfo)
             .subscribe(inventory => {
               this.inventory = inventory;
 

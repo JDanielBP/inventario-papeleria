@@ -4,7 +4,7 @@ import { CategoriesService } from '../categories/categories.service';
 import { forkJoin, map, Observable } from 'rxjs';
 import { Category } from '../../interfaces/category.interface';
 import { Unit } from '../../interfaces/unit.interface';
-import { InventoryInfoDTO } from '../../interfaces/inventoryInfoDTO.interface';
+import { InventoryInfo } from '../../interfaces/inventoryInfo.interface';
 import { Inventory } from '../../interfaces/inventory.interface';
 
 @Injectable({
@@ -16,23 +16,23 @@ export class DataConversionService {
     private unitsService: UnitsService
   ) { }
 
-  inventoryInfoDTOToInventory(inventoryInfoDTO: InventoryInfoDTO): Observable<Inventory> {
+  inventoryInfoToInventory(inventoryInfo: InventoryInfo): Observable<Inventory> {
     return forkJoin({
-      category: this.categoriesService.getCategory(inventoryInfoDTO.category!),
-      unit: this.unitsService.getUnit(inventoryInfoDTO.unit)
+      category: this.categoriesService.getCategory(inventoryInfo.category!),
+      unit: this.unitsService.getUnit(inventoryInfo.unit)
     }).pipe(
       map(results => {
         const category = results.category;
         const unit = results.unit;
 
         const inventory: Inventory = {
-          id: inventoryInfoDTO.id,
-          name: inventoryInfoDTO.name,
+          id: inventoryInfo.id,
+          name: inventoryInfo.name,
           categoryID: category.id,
-          price: inventoryInfoDTO.price,
-          stock: inventoryInfoDTO.stock,
+          price: inventoryInfo.price,
+          stock: inventoryInfo.stock,
           unitID: unit.id,
-          date: inventoryInfoDTO.date
+          date: inventoryInfo.date
         };
         
         return inventory;

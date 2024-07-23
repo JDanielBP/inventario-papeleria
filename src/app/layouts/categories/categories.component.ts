@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 
 import { Category } from '../../interfaces/category.interface';
 import { confirmMsg } from '../../../../../angular-pos-system/src/app/interfaces/confirm-msg.interface';
@@ -29,7 +28,6 @@ import { ConfirmComponent } from '../../components/modals/confirm/confirm.compon
   standalone: true,
   imports: [
     CommonModule,
-    HttpClientModule,
     InputTextModule,
     MatButtonModule,
     MatDialogModule,
@@ -145,7 +143,6 @@ export class CategoriesComponent {
   }
 
   functionOpenDialogAddCategory(){
-    let updatedData: boolean = false;
     this.selectedCategory = this.initCategory;
     const dialogRef = this.dialog.open(AddEditCategoryComponent, {
       data: {

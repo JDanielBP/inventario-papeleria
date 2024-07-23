@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 
-import { InventoryInfoDTO } from '../../interfaces/inventoryInfoDTO.interface';
+import { InventoryInfo } from '../../interfaces/inventoryInfo.interface';
 import { ConfirmMsg } from '../../interfaces/confirm-msg.interface';
 
 import { InventoryService } from '../../services/inventory/inventory.service';
@@ -18,7 +18,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { merge, Observable, startWith, Subject, switchMap, takeUntil} from 'rxjs';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
 
 import { AddEditInventoryComponent } from '../../components/modals/add-edit-inventory/add-edit-inventory.component';
 import { ConfirmComponent } from '../../components/modals/confirm/confirm.component';
@@ -29,7 +28,6 @@ import { ConfirmComponent } from '../../components/modals/confirm/confirm.compon
   standalone: true,
   imports: [
     CommonModule,
-    HttpClientModule,
     InputTextModule,
     MatButtonModule,
     MatDialogModule,
@@ -47,7 +45,7 @@ import { ConfirmComponent } from '../../components/modals/confirm/confirm.compon
 })
 export class InventoryComponent {
   displayedColumns: string[] = ['id', 'name', 'stock', 'unit', 'category', 'price', 'date', 'actions'];
-  dataSource: MatTableDataSource<InventoryInfoDTO> = new MatTableDataSource<InventoryInfoDTO>();
+  dataSource: MatTableDataSource<InventoryInfo> = new MatTableDataSource<InventoryInfo>();
   tableColor = '#F6F6F6'
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -55,7 +53,7 @@ export class InventoryComponent {
 
   txtInput = new FormControl();
 
-  initInventory: InventoryInfoDTO = {
+  initInventory: InventoryInfo = {
     id: '',
     name: '',
     category: '',
@@ -64,7 +62,7 @@ export class InventoryComponent {
     unit: '',
     date: null
   }
-  selectedInventory: InventoryInfoDTO = {
+  selectedInventory: InventoryInfo = {
     id: '',
     name: '',
     category: '',
@@ -109,13 +107,13 @@ export class InventoryComponent {
     console.error(err);
   }
 
-  handleNext = (inventory: InventoryInfoDTO[]) => {
+  handleNext = (inventory: InventoryInfo[]) => {
     this.dataSource.data = inventory;
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
   
-  handleNextValueChanges = (dataSourceInfo: InventoryInfoDTO[]) => {
+  handleNextValueChanges = (dataSourceInfo: InventoryInfo[]) => {
     this.dataSource.data = dataSourceInfo;
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -128,7 +126,7 @@ export class InventoryComponent {
     this.isLoadingResults = false;
   }
 
-  getInventory(): Observable<InventoryInfoDTO[]>{
+  getInventory(): Observable<InventoryInfo[]>{
     this.dataSource.filter = '';
     this.txtInput.setValue('');
     return this.inventoryService.getInventoryInfo(
@@ -157,7 +155,6 @@ export class InventoryComponent {
   }
 
   functionOpenDialogAddInventory(){
-    let updatedData: boolean = false;
     this.selectedInventory = this.initInventory;
     const dialogRef = this.dialog.open(AddEditInventoryComponent, {
       data: {
@@ -173,7 +170,7 @@ export class InventoryComponent {
     });
   }
 
-  functionOpenDialogEditInventory(inventoryInfo: InventoryInfoDTO){
+  functionOpenDialogEditInventory(inventoryInfo: InventoryInfo){
     let updatedData: boolean = false;
     this.selectedInventory = inventoryInfo
     const dialogRef = this.dialog.open(AddEditInventoryComponent, {
@@ -207,7 +204,7 @@ export class InventoryComponent {
     })
   }
 
-  functionOpenDialogDeleteInventory(inventory: InventoryInfoDTO){
+  functionOpenDialogDeleteInventory(inventory: InventoryInfo){
     this.selectedInventory = inventory;
     let deleteInventoryyMsg: ConfirmMsg = {
       title: `Eliminar "${this.selectedInventory.name}" del inventario`,
