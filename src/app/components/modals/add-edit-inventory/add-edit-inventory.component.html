@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>
   @if (!inventory.id) { Nuevo inventario }
-  @else { Editar inventario: {{ data.inventoryInfo?.name || '' }} } <!--  Sin el operador (|| '') esto aún funciona, pero marca error en consola -->
+  @else { Editar inventario: {{ (data.inventoryInfo && data.inventoryInfo.name) ? data.inventoryInfo.name : ''}} }
 </h2>
 
 <form [formGroup]="myForm" (ngSubmit)="registerInventory()" autocomplete="off" >

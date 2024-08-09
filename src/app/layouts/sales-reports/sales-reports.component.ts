@@ -158,8 +158,8 @@ export class SalesReportsComponent {
   functionOpenDialogDeleteSale(saleInfo: Sale){
     this.selectedSaleInfo = saleInfo;
     let deleteInventoryyMsg: ConfirmMsg = {
-      title: `Cancelar la venta ""${this.selectedSaleInfo.id}""`,
-      description: `¿Está seguro de cancelar la venta "${this.selectedSaleInfo.id}"? Los productos asociados a esta venta regresarán al stock`
+      title: `Cancelar la venta con ID ""${this.selectedSaleInfo.id}""`,
+      description: `¿Está seguro de cancelar la venta "${this.selectedSaleInfo.id}"? Si los productos asociados a esta venta no han sido eliminados, estos regresarán al stock`
     }
 
     const dialogRef = this.dialog.open(ConfirmComponent, {

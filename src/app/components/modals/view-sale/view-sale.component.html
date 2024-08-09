@@ -3,7 +3,9 @@
     <div>
       <section>Venta {{data.id}}</section>
       <section>Fecha: {{data.date | date:"dd'/'MMM'/'yyyy hh:mm:ss a"}}</section>
-      <section>Cliente: {{data.customer}}</section>
+      @if(data.customer){
+        <section>Cliente: {{data.customer}}</section>
+      }
     </div>
     <div>
       <button mat-icon-button matTooltip="Guardar como PDF" (click)="generateReport(false)">
@@ -27,8 +29,8 @@
     
         <ng-container [matColumnDef]="displayedColumns[1]">
           <th mat-header-cell *matHeaderCellDef style="text-align: center;">Cantidad</th>
-          <td mat-cell *matCellDef="let saleDetais" class="quantity-in-table"> {{saleDetais.quantity}}</td>
-          <td mat-footer-cell *matFooterCellDef> </td>
+          <td mat-cell *matCellDef="let saleDetais" style="text-align: right;"> {{saleDetais.quantity}}</td>
+          <td mat-footer-cell *matFooterCellDef></td>
         </ng-container>
   
         <ng-container [matColumnDef]="displayedColumns[2]">

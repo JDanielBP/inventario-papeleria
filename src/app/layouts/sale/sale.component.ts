@@ -166,10 +166,9 @@ export class SaleComponent {
       saleDetail: []
     }
 
-    let i = 0;
     this.cart.products.forEach(product => {
       let saleDetailOut: SaleDetails = {
-        id: String(i++),
+        id: this.idGeneratorService.elevenCharacterID(),
         inventoryId: product.inventory.id,
         quantity: product.quantity,
         price: product.inventory.price
@@ -203,7 +202,8 @@ export class SaleComponent {
 
     doc.text(`Venta: ${sale.id}`, 15, 15);
     doc.text(`Fecha: ${date}`, doc.internal.pageSize.width - 85, 15);
-    doc.text(`Cliente: ${this.customerName.value}`, 15, 25);
+    if(this.customerName.value)
+      doc.text(`Cliente: ${this.customerName.value}`, 15, 25);
 
     const head = ['NOMBRE', 'CANTIDAD', 'PRECIO', 'SUBTOTAL'];
     const body = this.cart.products.map(product => [

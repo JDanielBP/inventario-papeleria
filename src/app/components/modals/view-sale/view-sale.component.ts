@@ -61,7 +61,8 @@ export class ViewSaleComponent {
 
     doc.text(`Venta: ${sale.id}`, 15, 15);
     doc.text(`Fecha: ${date}`, doc.internal.pageSize.width - 85, 15);
-    doc.text(`Cliente: ${sale.customer}`, 15, 25);
+    if(sale.customer)
+      doc.text(`Cliente: ${sale.customer}`, 15, 25);
 
     const head = ['NOMBRE', 'CANTIDAD', 'PRECIO', 'SUBTOTAL'];
     const body = this.saleDetails.map(product => [

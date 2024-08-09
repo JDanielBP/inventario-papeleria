@@ -24,11 +24,11 @@ export class SalesService {
       .set('_sort', sort)
       .set('_order', order)
 
-    return this.http.get<Sale[]>(`${this.baseURL}/sales-info`, {params});
+    return this.http.get<Sale[]>(`${this.baseURL}/sales`, {params});
   }
 
   getSaleDetailById(saleInfoID: string): Observable<SaleDetails[]>{
-    return this.http.get<SaleDetails[]>(`${this.baseURL}/sale/detail?sale_id=${saleInfoID}`);
+    return this.http.get<SaleDetails[]>(`${this.baseURL}/sales/detail/${saleInfoID}`);
   }
 
   addSale(sale: Sale): Observable<Sale>{
