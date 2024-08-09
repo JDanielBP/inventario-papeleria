@@ -43,7 +43,7 @@ export class ViewSaleComponent {
   ){}
 
   ngOnInit(): void {
-    this.salesService.getSaleDetails(this.data.id)
+    this.salesService.getSaleDetailById(this.data.id)
       .subscribe(saleDetail => {
         this.saleDetails = saleDetail;
         this.dataSource.data = this.saleDetails;

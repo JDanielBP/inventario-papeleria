@@ -33,7 +33,11 @@ export class InventoryService {
       .set('_sort', sort)
       .set('_order', order)
 
-    return this.http.get<InventoryInfo[]>(`${this.baseURL}/inventoryInfo`, {params})
+    return this.http.get<InventoryInfo[]>(`${this.baseURL}/inventory/info`, {params})
+  }
+
+  getAnInventory(id: string):Observable<Inventory>{
+    return this.http.get<Inventory>(`${this.baseURL}/inventory/${id}`);
   }
 
   addInventory(inventory: Inventory): Observable<Inventory>{

@@ -23,7 +23,6 @@ import { CategoryNameValidatorService } from '../../../validators/category-name-
   styleUrl: './add-edit-category.component.scss'
 })
 export class AddEditCategoryComponent {
-  newInventory: boolean = true;
   myForm!: FormGroup;
   sameInfoFlag: boolean = false;
 

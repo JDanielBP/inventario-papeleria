@@ -170,7 +170,7 @@ export class SaleComponent {
     this.cart.products.forEach(product => {
       let saleDetailOut: SaleDetails = {
         id: String(i++),
-        inventoryID: product.inventory.id,
+        inventoryId: product.inventory.id,
         quantity: product.quantity,
         price: product.inventory.price
       }

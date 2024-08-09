@@ -20,8 +20,6 @@ export class UnitsService {
   }
 
   getUnit(unitName: string): Observable<Unit> {
-    return this.http.get<Unit[]>(`${this.baseURL}/units?name=${unitName}`).pipe(
-      map(units => units[0]) // Obtén el primer elemento del array
-    );
+    return this.http.get<Unit>(`${this.baseURL}/units/${unitName}`)
   }
 }

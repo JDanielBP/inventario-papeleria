@@ -26,9 +26,7 @@ export class CategoriesService {
   }
 
   getCategory(categoryName: string): Observable<Category>{
-    return this.http.get<Category[]>(`${this.baseURL}/categories?name=${categoryName}`).pipe(
-      map(categories => categories[0]) // Se obtiene el primer elemento del array
-    );
+    return this.http.get<Category>(`${this.baseURL}/categories/${categoryName}`);
   }
 
   addCategory(category: Category): Observable<Category>{
@@ -39,7 +37,7 @@ export class CategoriesService {
     return this.http.put<Category>(`${this.baseURL}/categories/${category.id}`, category);
   }
 
-  deleteCategory(categoryID: string): Observable<any>{
-    return this.http.delete<any>(`${this.baseURL}/categories/${categoryID}`);
+  deleteCategory(categoryId: string): Observable<any>{
+    return this.http.delete<any>(`${this.baseURL}/categories/${categoryId}`);
   }
 }

@@ -27,14 +27,8 @@ export class SalesService {
     return this.http.get<Sale[]>(`${this.baseURL}/sales-info`, {params});
   }
 
-  getSale(saleID: string): Observable<Sale>{
-    return this.http.get<Sale[]>(`${this.baseURL}/sales?sale_id=${saleID}`).pipe(
-      map(sales => sales[0]) // Se obtiene el primer elemento del array
-    );
-  }
-
-  getSaleDetails(saleInfoID: string): Observable<SaleDetails[]>{
-    return this.http.get<SaleDetails[]>(`${this.baseURL}/sale-detail?sale_id=${saleInfoID}`);
+  getSaleDetailById(saleInfoID: string): Observable<SaleDetails[]>{
+    return this.http.get<SaleDetails[]>(`${this.baseURL}/sale/detail?sale_id=${saleInfoID}`);
   }
 
   addSale(sale: Sale): Observable<Sale>{

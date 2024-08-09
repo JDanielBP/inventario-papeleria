@@ -70,7 +70,14 @@
       
       <ng-container [matColumnDef]="displayedColumns[4]">
         <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Category">Categoría</th>
-        <td mat-cell *matCellDef="let inventory"> {{inventory.category}} </td>
+        <td mat-cell *matCellDef="let inventory">
+          @if(inventory.category === ""){
+            <i style="color: gray;">(Sin Categoría)</i>
+          }
+          @else {
+            {{inventory.category}} 
+          }
+        </td>
       </ng-container>
       
       <ng-container [matColumnDef]="displayedColumns[5]">
